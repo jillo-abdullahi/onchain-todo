@@ -3,7 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "author": "jillo woche",
-  "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",

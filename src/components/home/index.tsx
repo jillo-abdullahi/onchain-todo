@@ -1,15 +1,15 @@
 import { Grid } from "@chakra-ui/react";
 
-import CTASection from "./components/CTASection";
-import SomeImage from "./components/SomeImage";
-import SomeText from "./components/SomeText";
-
-const Home = () => {
+const Home = (): JSX.Element => {
   return (
-    <Grid gap={4}>
-      <SomeText />
-      <SomeImage />
-      <CTASection />
+    <Grid
+      templateColumns="repeat(auto-fill, minmax(300px, 1fr))"
+      gap={6}
+      padding={4}
+    >
+      {/* Add your components or content here */}
+
+      Some stuff ehre
     </Grid>
   );
 };
