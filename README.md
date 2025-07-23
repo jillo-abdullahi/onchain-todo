@@ -1,2 +1,3 @@
-# onchain-todo
-A todo app that's onchain
+# Onchain Todo App
+
+An onchain todo application built on top of a smart contract instead of a traditional BE.
