@@ -1,18 +1,10 @@
-import { defineConfig } from 'vite'
-import reactRefresh from '@vitejs/plugin-react-refresh'
-import { resolve } from "path";
+import react from "@vitejs/plugin-react";
+import { defineConfig } from "vite";
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [reactRefresh()],
-  esbuild: {
-    jsxInject: `import React from 'react'`
-  },
+  plugins: [react()],
   resolve: {
-    alias: {
-      components: resolve(__dirname, "src/components"),
-      styles: resolve(__dirname, "src/styles"),
-      routes: resolve(__dirname, "src/routes")
-    }
+    alias: {},
   },
-})
+});
