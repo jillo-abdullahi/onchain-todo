@@ -1,6 +1,5 @@
 import { IconButton } from "@chakra-ui/react";
 import { useTheme } from "next-themes";
-import { LuMoon, LuSun } from "react-icons/lu";
 import SunIcon from "./icons/SunIcon";
 import MoonIcon from "./icons/MoonIcon";
 

@@ -6,8 +6,11 @@ import { http, WagmiProvider } from "wagmi";
 import { sepolia } from "wagmi/chains";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { HeaderSection } from "./components/layout/HeaderSection";
+import { useTheme } from "next-themes";
 
 export default function Page() {
+  const { theme } = useTheme();
+
   const config = getDefaultConfig({
     appName: import.meta.env.VITE_WALLECT_CONNECT_APP_NAME,
     projectId: import.meta.env.VITE_WALLECT_CONNECT_PROJECT_ID,
@@ -27,9 +30,21 @@ export default function Page() {
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
         <RainbowKitProvider>
-          <Container maxW="2xl" p={2}>
-            <HeaderSection />
-          </Container>
+          <Box
+            w={"100%"}
+            minH={"100vh"}
+            backgroundImage={{
+              base: `url('/static/bg-mobile-${theme}.jpg')`,
+              md: `url('/static/bg-desktop-${theme}.jpg')`,
+            }}
+            backgroundRepeat={"no-repeat"}
+            backgroundSize={"contain"}
+            backgroundPosition={"top"}
+          >
+            <Container maxW={"3xl"} p={2}>
+              <HeaderSection />
+            </Container>
+          </Box>
         </RainbowKitProvider>
       </QueryClientProvider>
     </WagmiProvider>
