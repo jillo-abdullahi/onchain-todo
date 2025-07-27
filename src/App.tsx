@@ -1,7 +1,11 @@
 import { Box, Container } from "@chakra-ui/react";
-import { ColorModeToggle } from "./components/ColorModeToggle";
 import "@rainbow-me/rainbowkit/styles.css";
-import { getDefaultConfig, RainbowKitProvider } from "@rainbow-me/rainbowkit";
+import {
+  getDefaultConfig,
+  RainbowKitProvider,
+  lightTheme,
+  darkTheme,
+} from "@rainbow-me/rainbowkit";
 import { http, WagmiProvider } from "wagmi";
 import { sepolia } from "wagmi/chains";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
@@ -29,7 +33,9 @@ export default function Page() {
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
-        <RainbowKitProvider>
+        <RainbowKitProvider
+          theme={theme === "light" ? lightTheme() : darkTheme()}
+        >
           <Box
             w={"100%"}
             minH={"100vh"}

@@ -1,4 +1,4 @@
-import { Button } from "@chakra-ui/react";
+import { Box, Button, HStack, Image, Text } from "@chakra-ui/react";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 
 export const CustomConnectButton = () => {
@@ -13,17 +13,10 @@ export const CustomConnectButton = () => {
         authenticationStatus,
         mounted,
       }) => {
-        // Note: If your app doesn't use authentication, you
-        // can remove all 'authenticationStatus' checks
-        const ready = mounted && authenticationStatus !== "loading";
-        const connected =
-          ready &&
-          account &&
-          chain &&
-          (!authenticationStatus || authenticationStatus === "authenticated");
+        const connected = mounted && account && chain;
         return (
           <div
-            {...(!ready && {
+            {...(!mounted && {
               "aria-hidden": true,
               style: {
                 opacity: 0,
@@ -38,7 +31,7 @@ export const CustomConnectButton = () => {
                   <Button
                     onClick={openConnectModal}
                     colorPalette={"gray"}
-                    variant={"outline"}
+                    variant={"solid"}
                     alignContent={"center"}
                     borderRadius={"md"}
                   >
@@ -48,46 +41,53 @@ export const CustomConnectButton = () => {
               }
               if (chain.unsupported) {
                 return (
-                  <button onClick={openChainModal} type="button">
+                  <Button
+                    onClick={openChainModal}
+                    colorPalette={"red"}
+                    variant={"solid"}
+                  >
                     Wrong network
-                  </button>
+                  </Button>
                 );
               }
               return (
                 <div style={{ display: "flex", gap: 12 }}>
-                  <button
-                    onClick={openChainModal}
-                    style={{ display: "flex", alignItems: "center" }}
+                  <Button
+                    colorPalette={"gray"}
+                    variant={"solid"}
+                    onClick={openAccountModal}
                     type="button"
+                    borderRadius={"md"}
+                    alignContent={"center"}
                   >
                     {chain.hasIcon && (
-                      <div
-                        style={{
-                          background: chain.iconBackground,
-                          width: 12,
-                          height: 12,
-                          borderRadius: 999,
-                          overflow: "hidden",
-                          marginRight: 4,
-                        }}
+                      <Box
+                        marginRight={1}
+                        background={chain.iconBackground}
+                        w={4}
+                        h={4}
+                        borderRadius={"50%"}
+                        overflow={"hidden"}
+                        alignContent={"center"}
                       >
                         {chain.iconUrl && (
-                          <img
+                          <Image
+                            w={4}
+                            h={4}
                             alt={chain.name ?? "Chain icon"}
                             src={chain.iconUrl}
-                            style={{ width: 12, height: 12 }}
                           />
                         )}
-                      </div>
+                      </Box>
                     )}
-                    {chain.name}
-                  </button>
-                  <button onClick={openAccountModal} type="button">
-                    {account.displayName}
-                    {account.displayBalance
-                      ? ` (${account.displayBalance})`
-                      : ""}
-                  </button>
+
+                    <HStack alignItems={"center"} fontSize={16} pt={0.5}>
+                      {account.displayName}
+                      {account.displayBalance
+                        ? ` (${account.displayBalance})`
+                        : ""}
+                    </HStack>
+                  </Button>
                 </div>
               );
             })()}
