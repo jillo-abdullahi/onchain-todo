@@ -9,7 +9,7 @@ import { system } from "./theme";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <ChakraProvider value={system}>
+    <ChakraProvider value={system} >
       <ThemeProvider attribute="class">
         <App />
       </ThemeProvider>
