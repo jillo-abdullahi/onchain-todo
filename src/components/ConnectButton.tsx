@@ -10,7 +10,6 @@ export const CustomConnectButton = () => {
         openAccountModal,
         openChainModal,
         openConnectModal,
-        authenticationStatus,
         mounted,
       }) => {
         const connected = mounted && account && chain;

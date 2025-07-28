@@ -12,6 +12,7 @@ import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { HeaderSection } from "./components/layout/HeaderSection";
 import { useTheme } from "next-themes";
 import { CreateTodoInput } from "./components/CreateTodoInput";
+import { TodoList } from "./components/TodoList";
 
 export default function Page() {
   const { theme } = useTheme();
@@ -51,6 +52,7 @@ export default function Page() {
             <Container maxW={"3xl"} p={2}>
               <HeaderSection />
               <CreateTodoInput mt={12} />
+              <TodoList />
             </Container>
           </Box>
         </RainbowKitProvider>
