@@ -7,12 +7,13 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { useTheme } from "next-themes";
-import { LuGripVertical, LuX } from "react-icons/lu";
+import { LuGripVertical, LuX, LuInbox } from "react-icons/lu";
 import { RadioChecked } from "./icons/RadioChecked";
 import { RadioUnchecked } from "./icons/RadioUnchecked";
 import { Todo } from "../types";
 import { useDragAndDrop } from "@formkit/drag-and-drop/react";
 import { CreateTodoInput } from "./CreateTodoInput";
+import { TodoEmptyState } from "./TodoEmptyState";
 
 interface TodoListProps extends BoxProps {
   todoList: { id: number; text: string; completed: boolean }[];
@@ -42,70 +43,75 @@ export const TodoList = ({ todoList, ...props }: TodoListProps) => {
         boxShadow={"0px 35px 50px -15px rgba(0, 0, 0, 0.5)"}
         {...props}
       >
-        <Box
-          ref={parent}
-          divideY="1px"
-          divideStyle={"solid"}
-          divideColor={isDarkTheme ? "#393A4B" : "#979797"}
-        >
-          {todos.map(({ text, id, completed }) => (
-            <HStack
-              key={id}
-              p={4}
-              alignItems={"center"}
-              justifyContent="space-between"
-            >
-              <HStack>
-                <LuGripVertical className="drag-handle" cursor={"pointer"} />
-                <HStack>
-                  <IconButton
-                    aria-label={
-                      completed ? "Mark as incomplete" : "Mark as complete"
-                    }
-                    variant="ghost"
-                    borderRadius={"full"}
-                    size="xs"
-                    colorScheme={isDarkTheme ? "teal" : "blue"}
-                    onClick={() => {
-                      _setTodos((prev) =>
-                        prev.map((todo) =>
-                          todo.id === id
-                            ? { ...todo, completed: !todo.completed }
-                            : todo
-                        )
-                      );
-                    }}
-                  >
-                    {completed ? <RadioChecked /> : <RadioUnchecked />}
-                  </IconButton>
-                  <Text
-                    textDecoration={completed ? "line-through" : "none"}
-                    fontSize={"18px"}
-                  >
-                    {text}
-                  </Text>
-                </HStack>
-              </HStack>
-              <IconButton
-                aria-label="Delete todo"
-                variant="ghost"
-                size="xs"
-                colorScheme={isDarkTheme ? "red" : "orange"}
-                onClick={() => {
-                  _setTodos((prev) => prev.filter((todo) => todo.id !== id));
-                }}
+        {todos.length ? (
+          <Box
+            ref={parent}
+            divideY="1px"
+            divideStyle={"solid"}
+            divideColor={isDarkTheme ? "#393A4B" : "#979797"}
+          >
+            {todos.map(({ text, id, completed }) => (
+              <HStack
+                key={id}
+                p={4}
+                alignItems={"center"}
+                justifyContent="space-between"
               >
-                <LuX />
-              </IconButton>
-            </HStack>
-          ))}
-        </Box>
-        {/* Filters count section  */}
+                <HStack>
+                  <LuGripVertical className="drag-handle" cursor={"pointer"} />
+                  <HStack>
+                    <IconButton
+                      aria-label={
+                        completed ? "Mark as incomplete" : "Mark as complete"
+                      }
+                      variant="ghost"
+                      borderRadius={"full"}
+                      size="xs"
+                      colorScheme={isDarkTheme ? "teal" : "blue"}
+                      onClick={() => {
+                        _setTodos((prev) =>
+                          prev.map((todo) =>
+                            todo.id === id
+                              ? { ...todo, completed: !todo.completed }
+                              : todo
+                          )
+                        );
+                      }}
+                    >
+                      {completed ? <RadioChecked /> : <RadioUnchecked />}
+                    </IconButton>
+                    <Text
+                      textDecoration={completed ? "line-through" : "none"}
+                      fontSize={"18px"}
+                    >
+                      {text}
+                    </Text>
+                  </HStack>
+                </HStack>
+                <IconButton
+                  aria-label="Delete todo"
+                  rounded={"full"}
+                  variant="ghost"
+                  size="xs"
+                  colorScheme={isDarkTheme ? "red" : "orange"}
+                  onClick={() => {
+                    _setTodos((prev) => prev.filter((todo) => todo.id !== id));
+                  }}
+                >
+                  <LuX />
+                </IconButton>
+              </HStack>
+            ))}
+          </Box>
+        ) : (
+          <TodoEmptyState />
+        )}
+        {/* Filters count section desktop view  */}
         <HStack p={3} justifyContent="space-between" alignItems={"center"}>
           <Text fontSize="sm" color={isDarkTheme ? "gray.400" : "gray.600"}>
             {todos.filter((todo) => !todo.completed).length} items left
           </Text>
-          <HStack gap={2}>
+          <HStack gap={2} display={{ base: "none", md: "flex" }}>
             <Button
               variant="plain"
               _hover={{
@@ -133,6 +139,7 @@ export const TodoList = ({ todoList, ...props }: TodoListProps) => {
           </HStack>
           <Button
             variant="plain"
+            p={0}
             _hover={{
               color: "#3A7CFD",
             }}
@@ -140,7 +147,51 @@ export const TodoList = ({ todoList, ...props }: TodoListProps) => {
               _setTodos((prev) => prev.filter((todo) => !todo.completed));
             }}
           >
-            <Text fontSize="sm">Clear Completed</Text>
+            <Text fontSize="sm" textAlign={"right"}>
+              Clear Completed
+            </Text>
+          </Button>
+        </HStack>
+      </Box>
+
+      {/* Filters count section mobile view  */}
+      <Box
+        mt={4}
+        display={{ base: "flex", md: "none" }}
+        borderRadius={"md"}
+        bg={isDarkTheme ? "gray.800" : "white"}
+        boxShadow={"0px 35px 50px -15px rgba(0, 0, 0, 0.5)"}
+      >
+        <HStack
+          gap={2}
+          p={3}
+          alignItems={"center"}
+          justifyContent={"center"}
+          w="100%"
+        >
+          <Button
+            variant="plain"
+            _hover={{
+              color: "#3A7CFD",
+            }}
+          >
+            <Text fontSize="sm">All</Text>
+          </Button>
+          <Button
+            variant="plain"
+            _hover={{
+              color: "#3A7CFD",
+            }}
+          >
+            <Text fontSize="sm">Active</Text>
+          </Button>
+          <Button
+            variant="plain"
+            _hover={{
+              color: "#3A7CFD",
+            }}
+          >
+            <Text fontSize="sm">Completed</Text>
           </Button>
         </HStack>
       </Box>
