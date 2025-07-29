@@ -1,9 +1,33 @@
-import { Box, BoxProps, Input, InputGroup, Kbd, Text } from "@chakra-ui/react";
-import { LuUser, LuCircle } from "react-icons/lu";
+import { Box, BoxProps, Input, InputGroup, Kbd } from "@chakra-ui/react";
+import { useState } from "react";
 import { useTheme } from "next-themes";
+import { Todo } from "../types";
 
-export const CreateTodoInput = ({ ...props }: BoxProps) => {
+interface CreateTodoInputProps extends BoxProps {
+  onCreateTodo?: (todoList: Todo[]) => void;
+  todoList: Todo[];
+}
+
+export const CreateTodoInput = ({
+  todoList,
+  onCreateTodo,
+  ...props
+}: CreateTodoInputProps) => {
   const { theme } = useTheme();
+  const [todoItem, setTodoItem] = useState("");
+
+  const handleCreateTodo = () => {
+    if (todoItem.trim() === "") return;
+    const newTodo: Todo = {
+      id: todoList.length + 1,
+      text: todoItem,
+      completed: false,
+    };
+    setTodoItem("");
+    if (onCreateTodo) {
+      onCreateTodo([...todoList, newTodo]);
+    }
+  };
   return (
     <InputGroup
       startElement={
@@ -32,6 +56,7 @@ export const CreateTodoInput = ({ ...props }: BoxProps) => {
     >
       <Input
         id="create-todo-input"
+        value={todoItem}
         p={8}
         outline={"none"}
         border={"none"}
@@ -45,6 +70,12 @@ export const CreateTodoInput = ({ ...props }: BoxProps) => {
         boxShadow={"0px 35px 50px -15px rgba(0, 0, 0, 0.5)"}
         borderRadius={"lg"}
         caretColor="#3A7CFD"
+        onChange={(e) => setTodoItem(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" && e.currentTarget.value.trim() !== "") {
+            handleCreateTodo();
+          }
+        }}
       />
     </InputGroup>
   );

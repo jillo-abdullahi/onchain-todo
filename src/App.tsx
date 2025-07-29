@@ -13,9 +13,18 @@ import { HeaderSection } from "./components/layout/HeaderSection";
 import { useTheme } from "next-themes";
 import { CreateTodoInput } from "./components/CreateTodoInput";
 import { TodoList } from "./components/TodoList";
+import { useDragAndDrop } from "@formkit/drag-and-drop/react";
+import { Todo } from "./types";
 
 export default function Page() {
   const { theme } = useTheme();
+
+  // mock data for demonstration purposes
+  const todoList = [
+    { id: 1, text: "Learn React", completed: false },
+    { id: 2, text: "Build a Todo App", completed: true },
+    { id: 3, text: "Deploy to Vercel", completed: false },
+  ];
 
   const config = getDefaultConfig({
     appName: import.meta.env.VITE_WALLECT_CONNECT_APP_NAME,
@@ -51,8 +60,7 @@ export default function Page() {
           >
             <Container maxW={"3xl"} p={2}>
               <HeaderSection />
-              <CreateTodoInput mt={12} />
-              <TodoList />
+              <TodoList mt={12} todoList={todoList} />
             </Container>
           </Box>
         </RainbowKitProvider>
