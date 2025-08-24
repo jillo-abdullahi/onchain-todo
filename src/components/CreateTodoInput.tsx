@@ -2,6 +2,8 @@ import { Box, BoxProps, Input, InputGroup, Kbd } from "@chakra-ui/react";
 import { useState } from "react";
 import { useTheme } from "next-themes";
 import { Todo } from "../types";
+import { useDispatch } from "react-redux";
+import { addTodo } from "../app/todos/todosSlice";
 
 interface CreateTodoInputProps extends BoxProps {
   onCreateTodo?: (todoList: Todo[]) => void;
@@ -15,17 +17,21 @@ export const CreateTodoInput = ({
 }: CreateTodoInputProps) => {
   const { theme } = useTheme();
   const [todoItem, setTodoItem] = useState("");
+  const dispatch = useDispatch();
 
   const handleCreateTodo = () => {
     if (todoItem.trim() === "") return;
     const newTodo: Todo = {
-      id: todoList.length + 1,
+      id: todoList.length ? todoList.length + 1 : 1,
       text: todoItem,
       completed: false,
     };
+
     setTodoItem("");
     if (onCreateTodo) {
-      onCreateTodo([...todoList, newTodo]);
+      onCreateTodo(todoList.length ? [...todoList, newTodo] : [newTodo]);
+
+      dispatch(addTodo({ text: todoItem }));
     }
   };
   return (

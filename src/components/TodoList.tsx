@@ -6,6 +6,7 @@ import {
   IconButton,
   Text,
 } from "@chakra-ui/react";
+import { useSelector, useDispatch } from "react-redux";
 import { useTheme } from "next-themes";
 import { LuGripVertical, LuX, LuInbox } from "react-icons/lu";
 import { RadioChecked } from "./icons/RadioChecked";
@@ -14,22 +15,30 @@ import { Todo } from "../types";
 import { useDragAndDrop } from "@formkit/drag-and-drop/react";
 import { CreateTodoInput } from "./CreateTodoInput";
 import { TodoEmptyState } from "./TodoEmptyState";
+import { RootState } from "../app/store";
+import { setTodos, removeTodo, toggleTodo } from "../app/todos/todosSlice";
+
 
 interface TodoListProps extends BoxProps {
   todoList: { id: number; text: string; completed: boolean }[];
 }
 
-export const TodoList = ({ todoList, ...props }: TodoListProps) => {
+export const TodoList = ({ ...props }: BoxProps) => {
   const { theme } = useTheme();
   const isDarkTheme = theme === "dark";
+  const dispatch = useDispatch();
+  const todoList = useSelector((state: RootState) => state.todos);
 
   const [parent, todos, _setTodos] = useDragAndDrop<HTMLUListElement, Todo>(
     todoList,
     {
       group: "todoList",
       dragHandle: ".drag-handle",
-    }
+    },
+    
   );
+
+  console.log("todos from redux", todoList);
 
   return (
     <>
@@ -109,7 +118,7 @@ export const TodoList = ({ todoList, ...props }: TodoListProps) => {
         {/* Filters count section desktop view  */}
         <HStack p={3} justifyContent="space-between" alignItems={"center"}>
           <Text fontSize="sm" color={isDarkTheme ? "gray.400" : "gray.600"}>
-            {todos.filter((todo) => !todo.completed).length} items left
+            {todos.length > 0 ? todos.filter((todo) => !todo.completed).length : 0 } items left
           </Text>
           <HStack gap={2} display={{ base: "none", md: "flex" }}>
             <Button
