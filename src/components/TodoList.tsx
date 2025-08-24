@@ -13,32 +13,49 @@ import { RadioChecked } from "./icons/RadioChecked";
 import { RadioUnchecked } from "./icons/RadioUnchecked";
 import { Todo } from "../types";
 import { useDragAndDrop } from "@formkit/drag-and-drop/react";
+import { DragendEvent } from "@formkit/drag-and-drop";
 import { CreateTodoInput } from "./CreateTodoInput";
 import { TodoEmptyState } from "./TodoEmptyState";
 import { RootState } from "../app/store";
 import { setTodos, removeTodo, toggleTodo } from "../app/todos/todosSlice";
-
-
-interface TodoListProps extends BoxProps {
-  todoList: { id: number; text: string; completed: boolean }[];
-}
+import { useEffect, useState } from "react";
 
 export const TodoList = ({ ...props }: BoxProps) => {
   const { theme } = useTheme();
   const isDarkTheme = theme === "dark";
   const dispatch = useDispatch();
   const todoList = useSelector((state: RootState) => state.todos);
+  const [filter, setFilter] = useState<"all" | "active" | "completed">("all");
 
   const [parent, todos, _setTodos] = useDragAndDrop<HTMLUListElement, Todo>(
-    todoList,
+    todoList.todos || [],
     {
       group: "todoList",
       dragHandle: ".drag-handle",
-    },
-    
+      onDragend: (event: any) => {
+        const { values } = event;
+
+        // Update the Redux store with the new order
+        dispatch(setTodos(values));
+      },
+    }
   );
 
-  console.log("todos from redux", todoList);
+  console.log({ filter });
+
+  useEffect(() => {
+    let filteredTodos = todoList.todos;
+    console.log("Applying filter:", filter, todoList.todos);
+
+    if (filter === "active") {
+      filteredTodos = todoList.todos.filter((todo) => !todo.completed);
+    } else if (filter === "completed") {
+      filteredTodos = todoList.todos.filter((todo) => todo.completed);
+    }
+
+    console.log({ filteredTodos });
+    _setTodos(filteredTodos);
+  }, [filter]);
 
   return (
     <>
@@ -78,13 +95,13 @@ export const TodoList = ({ ...props }: BoxProps) => {
                       size="xs"
                       colorScheme={isDarkTheme ? "teal" : "blue"}
                       onClick={() => {
-                        _setTodos((prev) =>
-                          prev.map((todo) =>
-                            todo.id === id
-                              ? { ...todo, completed: !todo.completed }
-                              : todo
-                          )
+                        const todosUpdated = todoList.todos.map((todo) =>
+                          todo.id === id
+                            ? { ...todo, completed: !todo.completed }
+                            : todo
                         );
+                        dispatch(setTodos(todosUpdated));
+                        _setTodos(todosUpdated);
                       }}
                     >
                       {completed ? <RadioChecked /> : <RadioUnchecked />}
@@ -105,6 +122,8 @@ export const TodoList = ({ ...props }: BoxProps) => {
                   colorScheme={isDarkTheme ? "red" : "orange"}
                   onClick={() => {
                     _setTodos((prev) => prev.filter((todo) => todo.id !== id));
+
+                    dispatch(removeTodo({ id }));
                   }}
                 >
                   <LuX />
@@ -118,7 +137,10 @@ export const TodoList = ({ ...props }: BoxProps) => {
         {/* Filters count section desktop view  */}
         <HStack p={3} justifyContent="space-between" alignItems={"center"}>
           <Text fontSize="sm" color={isDarkTheme ? "gray.400" : "gray.600"}>
-            {todos.length > 0 ? todos.filter((todo) => !todo.completed).length : 0 } items left
+            {todos.length > 0
+              ? todos.filter((todo) => !todo.completed).length
+              : 0}{" "}
+            items left
           </Text>
           <HStack gap={2} display={{ base: "none", md: "flex" }}>
             <Button
@@ -126,6 +148,7 @@ export const TodoList = ({ ...props }: BoxProps) => {
               _hover={{
                 color: "#3A7CFD",
               }}
+              onClick={() => setFilter("all")}
             >
               <Text fontSize="sm">All</Text>
             </Button>
@@ -133,6 +156,9 @@ export const TodoList = ({ ...props }: BoxProps) => {
               variant="plain"
               _hover={{
                 color: "#3A7CFD",
+              }}
+              onClick={() => {
+                setFilter("active");
               }}
             >
               <Text fontSize="sm">Active</Text>
@@ -142,6 +168,7 @@ export const TodoList = ({ ...props }: BoxProps) => {
               _hover={{
                 color: "#3A7CFD",
               }}
+              onClick={() => setFilter("completed")}
             >
               <Text fontSize="sm">Completed</Text>
             </Button>
@@ -183,6 +210,7 @@ export const TodoList = ({ ...props }: BoxProps) => {
             _hover={{
               color: "#3A7CFD",
             }}
+            onClick={() => setFilter("all")}
           >
             <Text fontSize="sm">All</Text>
           </Button>
@@ -191,6 +219,7 @@ export const TodoList = ({ ...props }: BoxProps) => {
             _hover={{
               color: "#3A7CFD",
             }}
+            onClick={() => setFilter("active")}
           >
             <Text fontSize="sm">Active</Text>
           </Button>
@@ -199,6 +228,7 @@ export const TodoList = ({ ...props }: BoxProps) => {
             _hover={{
               color: "#3A7CFD",
             }}
+            onClick={() => setFilter("completed")}
           >
             <Text fontSize="sm">Completed</Text>
           </Button>
